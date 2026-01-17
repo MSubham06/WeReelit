@@ -39,32 +39,6 @@
     </script>
 
     <style>
-        /* Continuous Scrolling Animation */
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-        
-        .marquee-container {
-            width: 100%;
-            overflow: hidden;
-            white-space: nowrap;
-            position: relative;
-        }
-
-        .marquee-content {
-            display: inline-flex;
-            animation: scroll 60s linear infinite;
-        }
-
-        .marquee-paused .marquee-content {
-            animation-play-state: paused !important;
-        }
-
-        .marquee-content:hover {
-            animation-play-state: paused;
-        }
-
         /* Hide scrollbar */
         .hide-scroll::-webkit-scrollbar {
             display: none;
@@ -74,14 +48,12 @@
             scrollbar-width: none;
         }
 
-        /* FIX: Better Dropdown Styling */
         select option {
-            background-color: #0d332b; /* brand-darker */
-            color: #E0FDF4; /* brand-text */
+            background-color: #0d332b; 
+            color: #E0FDF4; 
             padding: 15px;
         }
         
-        /* Remove default arrow and add custom SVG arrow */
         select {
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -92,9 +64,25 @@
             background-size: 1.2em; 
         }
         
-        /* Fix for IE */
         select::-ms-expand {
             display: none;
+        }
+
+        /* --- Snow Effect Styles --- */
+        .snowflake {
+            position: absolute;
+            top: -10px;
+            background-color: white;
+            border-radius: 50%;
+            opacity: 0.8;
+            pointer-events: none;
+            animation: snowfall linear infinite;
+        }
+
+        @keyframes snowfall {
+            0% { transform: translateY(-10vh); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0.2; }
         }
     </style>
 </head>
@@ -107,7 +95,7 @@
             </div>
             <h3 class="text-2xl font-bold text-white mb-2">Request Received!</h3>
             <p class="text-gray-300 mb-6 font-light leading-relaxed text-sm">
-                Within 24hr will conncet to via whatsapp or email thanks for choiceing us
+                We will connect with you via WhatsApp or Email within 24hrs. Thanks for choosing us!
             </p>
             <button onclick="closeAlert()" class="bg-brand-light text-brand-darker font-bold py-3 px-8 rounded-full hover:bg-white hover:scale-105 transition transform shadow-lg">
                 OK
@@ -115,11 +103,11 @@
         </div>
     </div>
 
-    <nav class="fixed w-full z-50 bg-brand-dark/95 backdrop-blur-md border-b border-brand-main/30 transition-all duration-300">
+    <nav class="fixed w-full z-50 bg-brand-dark/95 md:backdrop-blur-md border-b border-brand-main/30 transition-all duration-300">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 md:h-20 items-center">
                 <div class="flex-shrink-0 flex items-center">
-                    <img class="h-6 w-auto md:h-8" src="assets/WeReelit-BrandName.png" alt="WeReelit"> 
+                    <img class="h-8 w-auto md:h-8" src="assets/WeReelit-BrandName.png" alt="WeReelit"> 
                 </div>
                 
                 <div class="hidden md:flex space-x-8 items-center">
@@ -132,14 +120,14 @@
                 </div>
 
                 <div class="md:hidden flex items-center">
-                    <button id="mobile-menu-btn" class="text-brand-light hover:text-white focus:outline-none p-2">
+                    <button id="mobile-menu-btn" class="text-brand-light hover:text-white focus:outline-none p-2" aria-label="Open Menu">
                         <i class="fas fa-bars text-2xl"></i>
                     </button>
                 </div>
             </div>
         </div>
         
-        <div id="mobile-menu" class="hidden md:hidden bg-brand-darker border-t border-brand-main/30 shadow-xl w-full absolute left-0">
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-darker border-t border-brand-main/30 shadow-xl w-full absolute left-0 z-40">
             <a href="#home" onclick="closeMenu()" class="block py-4 px-6 text-sm hover:bg-brand-main/20 border-b border-brand-main/10">Home</a>
             <a href="#about" onclick="closeMenu()" class="block py-4 px-6 text-sm hover:bg-brand-main/20 border-b border-brand-main/10">About</a>
             <a href="#why" onclick="closeMenu()" class="block py-4 px-6 text-sm hover:bg-brand-main/20 border-b border-brand-main/10">Why Us</a>
@@ -149,11 +137,13 @@
         </div>
     </nav>
 
-    <section id="home" class="relative pt-28 pb-12 md:pt-40 md:min-h-screen flex flex-col justify-center items-center overflow-hidden">
+    <section id="home" class="relative pt-24 pb-12 md:pt-40 md:min-h-screen flex flex-col justify-center items-center overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-brand-dark via-brand-main/10 to-brand-dark z-0"></div>
         
+        <div id="snow-container" class="absolute inset-0 pointer-events-none z-[5]"></div>
+        
         <div class="relative z-10 text-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full" data-aos="fade-up" data-aos-duration="1000">
-            <h1 class="text-5xl md:text-8xl font-black text-white tracking-tighter mb-4 leading-tight">
+            <h1 class="text-4xl sm:text-5xl md:text-8xl font-black text-white tracking-tighter mb-4 leading-tight">
                 We<span class="text-brand-light">Reelit</span>
             </h1>
             <p class="text-lg md:text-2xl font-light text-brand-text/80 mb-8 max-w-2xl mx-auto">
@@ -174,6 +164,7 @@
                     <span class="text-lg md:text-xl font-bold">Simplilean</span>
                     <span class="text-lg md:text-xl font-bold italic">Finize</span>
                     <span class="text-lg md:text-xl font-bold">Sash Cafe</span>
+                    <span class="text-lg md:text-xl font-bold italic">House of Cats</span>
                 </div>
             </div>
         </div>
@@ -182,9 +173,9 @@
     <section id="about" class="py-20 bg-brand-darker overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-                <div class="relative mr-6 md:mr-0 md:pr-0" data-aos="fade-right">
+                <div class="relative md:mr-0 md:pr-0" data-aos="fade-right">
                     <div class="absolute inset-0 bg-brand-light rounded-lg transform translate-x-3 translate-y-3"></div>
-                    <img src="assets/Me.jpg" alt="Subham Profile" class="relative rounded-lg shadow-2xl w-full object-cover h-[400px] md:h-[500px] border-2 border-brand-main">
+                    <img src="assets/Me.jpg" alt="Subham Profile" class="relative rounded-lg shadow-2xl w-full object-cover h-auto aspect-[4/5] md:h-[500px] border-2 border-brand-main">
                 </div>
                 <div data-aos="fade-left">
                     <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">About Me</h2>
@@ -194,7 +185,7 @@
                         I am a <strong>Software Developer</strong> by profession and a B.Tech student, but my creative heart beats for Video Editing. 
                     </p>
                     <p class="font-light text-base md:text-lg mb-8 text-gray-300 leading-relaxed">
-                        For the last <strong>4-5 years</strong>, I have been working as a freelance editor for multiple clients. What started as a basic hobby has turned into a professional passion. I create classic edits with a modern touch that helps brands impress their audience.
+                        For the last <strong>4-5 years</strong>, I have been working as a freelance editor for multiple clients. What started as a basic hobby has turned into a professional passion.
                     </p>
                     
                     <div class="grid grid-cols-2 gap-4">
@@ -240,13 +231,59 @@
     <section id="work" class="py-20 bg-brand-darker overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 text-center">
             <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">Portfolio</h2>
-            <h3 class="text-3xl font-bold text-white">Shared Smylo Work</h3>
-            <p class="text-sm font-light text-brand-text/60 mt-2">Swipe or click to play the reels below</p>
+            <h3 class="text-3xl font-bold text-white">Featured Projects</h3>
+            <p class="text-sm font-light text-brand-text/60 mt-2">Check out our latest work below</p>
         </div>
 
-        <div id="marqueeContainer" class="marquee-container py-4">
-            <div id="video-marquee" class="marquee-content gap-6 px-4">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-wrap justify-center gap-8">
+                
+                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="aspect-video w-full">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Animated Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Animated</h4>
+                    </div>
                 </div>
+
+                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="aspect-video w-full">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Informative Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Informative</h4>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="300">
+                    <div class="aspect-video w-full">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Podcast Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Podcast</h4>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="400">
+                    <div class="aspect-video w-full">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Story Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Story</h4>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="500">
+                    <div class="aspect-video w-full">
+                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Voice Sync Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+                    <div class="p-4 text-center">
+                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Voice Sync</h4>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </section>
 
@@ -257,7 +294,7 @@
                 <h3 class="text-3xl md:text-4xl font-bold text-white">Choose Your Edit</h3>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 gap-y-8">
                 <div class="bg-brand-darker border border-brand-main/30 rounded-2xl p-6 hover:border-brand-light transition duration-300 relative overflow-hidden group">
                     <div class="absolute top-0 right-0 bg-[#cd7f32] text-xs font-bold px-3 py-1 text-black rounded-bl-lg">BRONZE</div>
                     <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-brand-light transition">Basic</h3>
@@ -282,7 +319,7 @@
                     <a href="#contact" onclick="selectPack('Simple - Silver')" class="block text-center py-2 w-full border border-brand-light text-brand-light rounded hover:bg-brand-light hover:text-brand-darker font-bold transition">Select</a>
                 </div>
 
-                <div class="bg-brand-darker border-2 border-brand-light rounded-2xl p-6 transform md:scale-105 shadow-2xl shadow-brand-light/10 relative overflow-hidden z-10">
+                <div class="bg-brand-darker border-2 border-brand-light rounded-2xl p-6 md:transform md:scale-105 shadow-2xl shadow-brand-light/10 relative overflow-hidden z-10">
                     <div class="absolute top-0 right-0 bg-[#ffd700] text-xs font-bold px-3 py-1 text-black rounded-bl-lg">GOLD</div>
                     <div class="absolute top-0 left-0 w-full h-1 bg-brand-light"></div>
                     <h3 class="text-2xl font-bold text-white mb-2">Intermediate</h3>
@@ -329,37 +366,17 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-brand-light mb-2">Name</label>
-                            <input 
-                                type="text" 
-                                name="name" 
-                                required 
-                                placeholder="e.g. Subham Kumar"
-                                class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition"
-                            >
+                            <input type="text" name="name" required placeholder="e.g. Subham Kumar" class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition">
                         </div>
                         <div>
                             <label class="block text-xs uppercase tracking-wider text-brand-light mb-2">WhatsApp Number</label>
-                            <input 
-                                type="tel" 
-                                name="whatsapp" 
-                                required 
-                                placeholder="+91 98765 43210"
-                                pattern="[\+]?[0-9]{10,15}"
-                                oninput="this.value = this.value.replace(/[^0-9+]/g, '')"
-                                class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition"
-                            >
+                            <input type="tel" name="whatsapp" required placeholder="+91 98765 43210" pattern="[\+]?[0-9]{10,15}" oninput="this.value = this.value.replace(/[^0-9+]/g, '')" class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition">
                         </div>
                     </div>
 
                     <div>
                         <label class="block text-xs uppercase tracking-wider text-brand-light mb-2">Email</label>
-                        <input 
-                            type="email" 
-                            name="email" 
-                            required 
-                            placeholder="e.g. subham.editor@email.com"
-                            class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition"
-                        >
+                        <input type="email" name="email" required placeholder="e.g. subham.editor@email.com" class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition">
                     </div>
 
                     <div>
@@ -385,27 +402,55 @@
         </div>
     </section>
 
-    <footer class="bg-brand-black py-10 text-center border-t border-brand-main/20">
+    <footer class="bg-brand-black py-4 text-center border-t border-brand-main/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <img src="assets/WeReelit-BrandName.png" alt="WeReelit" class="h-12 md:h-14 mx-auto mb-6 opacity-90">
-            <p class="text-brand-text/50 text-sm mb-10 tracking-widest uppercase">Professional Video Editing & Design</p>
+            <img src="assets/WeReelit-BrandName.png" alt="WeReelit" class="h-10 md:h-12 mx-auto mb-4 opacity-90">
+            <p class="text-brand-text/50 text-xs mb-6 tracking-widest uppercase">Professional Video Editing & Design</p>
             
-            <div class="flex justify-center space-x-10 text-3xl text-brand-light mb-10">
+            <div class="flex justify-center space-x-10 text-2xl text-brand-light mb-6">
                 <a href="https://www.instagram.com/irl.subhhh?igsh=Znl4anBoMnhvNWhs" target="_blank" class="hover:text-white transition transform hover:scale-110"><i class="fab fa-instagram"></i></a>
-                
-                <a href="https://wa.me/917908913742?text=Hello!%20I%20checked%20your%20website%20and%20I'm%20interested%20in%20your%20video%20editing%20services.%20Can%20we%20discuss%20a%20project%3F" target="_blank" class="hover:text-green-400 transition transform hover:scale-110">
-                    <i class="fab fa-whatsapp"></i>
-                </a>
-
+                <a href="https://wa.me/917908913742?text=Hello!%20I%20checked%20your%20website..." target="_blank" class="hover:text-green-400 transition transform hover:scale-110"><i class="fab fa-whatsapp"></i></a>
                 <a href="https://www.linkedin.com/in/msubham" target="_blank" class="hover:text-white transition transform hover:scale-110"><i class="fab fa-linkedin"></i></a>
             </div>
-            <p class="text-xs text-gray-600">© 2026 WeReelit. All rights reserved.</p>
+            <p class="text-[10px] text-gray-600">© 2026 WeReelit. All rights reserved.</p>
         </div>
     </footer>
 
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         AOS.init({ once: true, offset: 50 });
+
+        // --- Snow Effect Script ---
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            const flakeCount = 50; 
+
+            for (let i = 0; i < flakeCount; i++) {
+                const flake = document.createElement('div');
+                flake.classList.add('snowflake');
+                
+                // Random Horizontal Position
+                flake.style.left = Math.random() * 100 + '%';
+                
+                // Random Size (between 2px and 5px)
+                const size = Math.random() * 3 + 2 + 'px';
+                flake.style.width = size;
+                flake.style.height = size;
+                
+                // Random Animation Speed (between 3s and 8s)
+                flake.style.animationDuration = Math.random() * 5 + 3 + 's';
+                
+                // Random Delay so they don't all start at once
+                flake.style.animationDelay = Math.random() * 5 + 's';
+                
+                // Random Opacity
+                flake.style.opacity = Math.random() * 0.5 + 0.3;
+
+                container.appendChild(flake);
+            }
+        }
+        createSnow();
+
 
         const btn = document.getElementById('mobile-menu-btn');
         const menu = document.getElementById('mobile-menu');
@@ -426,99 +471,8 @@
             document.getElementById('customAlert').classList.add('hidden');
         }
 
-        // --- VIDEO LOGIC ---
-        const marqueeContainer = document.getElementById('video-marquee');
-        const containerWrapper = document.getElementById('marqueeContainer');
-        
-        const videoFiles = [
-            "Smylo Reel 0.mp4", "Smylo Reel 1 .mp4", "Smylo Reel 2.mp4", "Smylo Reel 3 .mp4",
-            "Smylo Reel 4.mp4", "Smylo Reel 5 .mp4", "Smylo Reel 6.mp4", "Smylo Reel 7.mp4",
-            "Smylo Reel 8 .mp4", "Smylo Reel 9 .mp4", "Smylo Reel 10 .mp4", "Smylo Reel 11.mp4",
-            "Smylo Reel 12 .mp4", "Smylo Reel 13.mp4", "Smylo Reel 14.mp4", "Smylo Reel 15.mp4",
-            "Smylo Reel 16.mp4", "Smylo Reel 17.mp4", "Smylo Reel 18.mp4", "Smylo Reel 19.mp4",
-            "Smylo Reel 20.mp4", "Smylo Reel 21.mp4", "Smylo Reel 22.mp4", "Smylo Reel 23.mp4"
-        ];
+        // --- REMOVED OLD VIDEO MARQUEE LOGIC ---
 
-        const descriptions = [
-            "Corporate Promo Edit", "Dynamic Event Highlights", "Engaging Social Reel", "Product Showcase Cut",
-            "Cinematic Travel Vlog", "Interview & Dialogue", "Fast-Paced Action", "Motion Graphics Intro",
-            "Minimalist Aesthetic Cut", "Lifestyle Brand Reel", "Behind The Scenes", "Educational Content Edit",
-            "Fashion & Trends", "Food & Culinary", "Fitness & Motivation", "Tech Review Style",
-            "Real Estate Tour", "Music Video Teaser", "Podcast Short Edit", "Webinar Highlight Clip",
-            "Client Testimonial", "Event Teaser Edit", "Explainer Video Style", "Creative Transition Reel"
-        ];
-
-        function createVideoCards(files, offset=0) {
-            return files.map((fileName, index) => {
-                const globalIndex = index + offset;
-                const desc = descriptions[index % descriptions.length];
-                return `
-                <div class="relative w-[200px] md:w-[260px] aspect-[9/16] bg-brand-main/20 rounded-lg overflow-hidden border border-brand-main/30 flex-shrink-0 group hover:border-brand-light transition duration-300">
-                    <video id="vid-${globalIndex}" src="VideoAssets/${fileName}" class="w-full h-full object-cover opacity-90" playsinline loop muted></video>
-                    <div id="overlay-${globalIndex}" onclick="togglePlay(${globalIndex})" class="absolute inset-0 bg-black/40 flex flex-col items-center justify-center cursor-pointer transition hover:bg-black/30">
-                        <div class="bg-brand-light p-4 rounded-full shadow-lg transform transition hover:scale-110">
-                            <i class="fas fa-play text-brand-darker text-2xl pl-1"></i>
-                        </div>
-                        <p class="text-white font-bold text-sm mt-3 uppercase tracking-wider">Smylo Reel ${index}</p>
-                        <p class="text-brand-text/80 text-[10px] font-light mt-1">${desc}</p>
-                    </div>
-                    <div id="controls-${globalIndex}" class="absolute bottom-2 right-2 hidden z-10">
-                         <button onclick="toggleMute(${globalIndex})" class="bg-black/60 text-white p-2 rounded-full hover:bg-brand-light hover:text-brand-darker transition">
-                            <i id="mute-icon-${globalIndex}" class="fas fa-volume-mute"></i>
-                        </button>
-                    </div>
-                </div>
-            `}).join('');
-        }
-
-        marqueeContainer.innerHTML = createVideoCards(videoFiles, 0) + createVideoCards(videoFiles, videoFiles.length);
-
-        let currentPlayingId = null;
-
-        function togglePlay(id) {
-            const video = document.getElementById(`vid-${id}`);
-            const overlay = document.getElementById(`overlay-${id}`);
-            const controls = document.getElementById(`controls-${id}`);
-            
-            if (currentPlayingId !== null && currentPlayingId !== id) {
-                const prevVid = document.getElementById(`vid-${currentPlayingId}`);
-                const prevOverlay = document.getElementById(`overlay-${currentPlayingId}`);
-                const prevControls = document.getElementById(`controls-${currentPlayingId}`);
-                if(prevVid) {
-                    prevVid.pause();
-                    prevVid.currentTime = 0;
-                    prevOverlay.classList.remove('hidden');
-                    prevControls.classList.add('hidden');
-                }
-            }
-
-            if (video.paused) {
-                containerWrapper.classList.add('marquee-paused');
-                video.play();
-                overlay.classList.add('hidden');
-                controls.classList.remove('hidden');
-                currentPlayingId = id;
-            } else {
-                video.pause();
-                overlay.classList.remove('hidden');
-                controls.classList.add('hidden');
-                containerWrapper.classList.remove('marquee-paused');
-                currentPlayingId = null;
-            }
-        }
-
-        function toggleMute(id) {
-            const video = document.getElementById(`vid-${id}`);
-            const icon = document.getElementById(`mute-icon-${id}`);
-            video.muted = !video.muted;
-            if (video.muted) {
-                icon.className = 'fas fa-volume-mute';
-            } else {
-                icon.className = 'fas fa-volume-up';
-            }
-        }
-
-        // --- FORM HANDLING (CONNECTED TO GOOGLE SHEET) ---
         const form = document.getElementById('bookingForm');
         form.addEventListener('submit', (e) => {
             e.preventDefault();
@@ -528,7 +482,6 @@
             btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
             btn.disabled = true;
 
-            // --- YOUR LIVE URL ---
             const scriptURL = 'https://script.google.com/macros/s/AKfycbzv0rT4ucM-4Bn4xuR2zAbwPkQTcJ2Xpc-N2Mt34oAUp_iykdAT0ZWY3zwYo5__QVJc/exec';
 
             const data = new URLSearchParams(new FormData(form));
