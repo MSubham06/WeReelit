@@ -243,18 +243,10 @@
 
     <section id="work" class="py-20 bg-brand-darker overflow-hidden">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-6 text-center md:text-left">
-                <div>
-                    <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">Portfolio</h2>
-                    <h3 class="text-3xl font-bold text-white">Featured Projects</h3>
-                    <p class="text-sm font-light text-brand-text/60 mt-2">Swipe to explore our work</p>
-                </div>
-                
-                <div class="mt-4 md:mt-0 flex gap-4 justify-center md:justify-end">
-                    <button id="toggleScrollBtn" onclick="toggleScroll()" class="bg-brand-main/20 border border-brand-light/50 text-brand-light hover:bg-brand-light hover:text-brand-darker rounded-full w-12 h-12 flex items-center justify-center transition shadow-lg group">
-                        <i id="scrollIcon" class="fas fa-pause"></i>
-                    </button>
-                </div>
+            <div class="text-center">
+                <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">Portfolio</h2>
+                <h3 class="text-3xl font-bold text-white">Featured Projects</h3>
+                <p class="text-sm font-light text-brand-text/60 mt-2">Swipe to explore our work</p>
             </div>
         </div>
 
@@ -535,13 +527,14 @@
             document.getElementById('customAlert').classList.add('hidden');
         }
 
-        // --- NEW: Video Facade Logic (FIXED) ---
+        // --- Video Facade Logic with FIXES for Error 153 ---
         function loadVideo(element, videoId) {
             // Remove the overlay
             element.style.display = 'none';
             // Find the sibling container
             const container = element.nextElementSibling;
-            // Inject the iframe with autoplay AND mute to fix browser blocking
+            
+            // FIX: Added referrerpolicy and mute=1 to comply with browser/YouTube security
             container.innerHTML = `
                 <iframe class="w-full h-full" 
                     src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&playsinline=1" 
@@ -554,7 +547,7 @@
             `;
         }
 
-        // --- NEW: Auto Scroll Logic with Manual Override ---
+        // --- Auto Scroll Logic (Simplified: No Buttons) ---
         const scrollContainer = document.getElementById('scrollingWrapper');
         let scrollInterval;
         let isPaused = false;
@@ -564,7 +557,7 @@
             if (scrollInterval) clearInterval(scrollInterval);
             scrollInterval = setInterval(() => {
                 if (!isPaused) {
-                    // If scrolled to end, reset to start for loop effect (optional, or just stop)
+                    // If scrolled to end, reset to start for loop effect
                     if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 1) {
                          scrollContainer.scrollLeft = 0; // Loop back
                     } else {
@@ -574,37 +567,14 @@
             }, 20); // 50fps
         }
 
+        // Pauses when Mouse Enters or Touch Starts
         function pauseScroll() {
-            // Only pause if the master toggle is currently Playing
-            const btnIcon = document.getElementById('scrollIcon');
-            if(btnIcon.classList.contains('fa-pause')) {
-                isPaused = true;
-            }
+            isPaused = true;
         }
 
+        // Resumes when Mouse Leaves or Touch Ends
         function resumeScroll() {
-             const btnIcon = document.getElementById('scrollIcon');
-             if(btnIcon.classList.contains('fa-pause')) {
-                 isPaused = false;
-             }
-        }
-
-        function toggleScroll() {
-            const btnIcon = document.getElementById('scrollIcon');
-            if (btnIcon.classList.contains('fa-pause')) {
-                // User wants to Pause
-                isPaused = true;
-                btnIcon.classList.remove('fa-pause');
-                btnIcon.classList.add('fa-play');
-                // We actually clear interval here to be sure
-                clearInterval(scrollInterval);
-            } else {
-                // User wants to Play
-                isPaused = false;
-                btnIcon.classList.remove('fa-play');
-                btnIcon.classList.add('fa-pause');
-                startAutoScroll();
-            }
+             isPaused = false;
         }
 
         // Init Scroll
