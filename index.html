@@ -39,15 +39,18 @@
     </script>
 
     <style>
-        /* Hide scrollbar */
+        /* Hide scrollbar for cleaner look but allow functionality */
         .hide-scroll::-webkit-scrollbar {
-            display: none;
+            height: 8px;
         }
-        .hide-scroll {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
+        .hide-scroll::-webkit-scrollbar-track {
+            background: #0d332b;
         }
-
+        .hide-scroll::-webkit-scrollbar-thumb {
+            background: #1B7F66;
+            border-radius: 4px;
+        }
+        
         select option {
             background-color: #0d332b; 
             color: #E0FDF4; 
@@ -68,7 +71,7 @@
             display: none;
         }
 
-        /* --- Snow Effect Styles --- */
+        /* Snow Effect Styles */
         .snowflake {
             position: absolute;
             top: -10px;
@@ -83,6 +86,16 @@
             0% { transform: translateY(-10vh); opacity: 0; }
             20% { opacity: 1; }
             100% { transform: translateY(100vh); opacity: 0.2; }
+        }
+
+        /* Custom Play Button Pulse */
+        .play-pulse {
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(114, 207, 166, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(114, 207, 166, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(114, 207, 166, 0); }
         }
     </style>
 </head>
@@ -229,60 +242,111 @@
     </section>
 
     <section id="work" class="py-20 bg-brand-darker overflow-hidden">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 text-center">
-            <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">Portfolio</h2>
-            <h3 class="text-3xl font-bold text-white">Featured Projects</h3>
-            <p class="text-sm font-light text-brand-text/60 mt-2">Check out our latest work below</p>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-6 text-center md:text-left">
+                <div>
+                    <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">Portfolio</h2>
+                    <h3 class="text-3xl font-bold text-white">Featured Projects</h3>
+                    <p class="text-sm font-light text-brand-text/60 mt-2">Swipe to explore our work</p>
+                </div>
+                
+                <div class="mt-4 md:mt-0 flex gap-4 justify-center md:justify-end">
+                    <button id="toggleScrollBtn" onclick="toggleScroll()" class="bg-brand-main/20 border border-brand-light/50 text-brand-light hover:bg-brand-light hover:text-brand-darker rounded-full w-12 h-12 flex items-center justify-center transition shadow-lg group">
+                        <i id="scrollIcon" class="fas fa-pause"></i>
+                    </button>
+                </div>
+            </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-wrap justify-center gap-8">
+        <div id="scrollingWrapper" class="w-full overflow-x-auto hide-scroll pb-8" onmouseenter="pauseScroll()" onmouseleave="resumeScroll()" ontouchstart="pauseScroll()" ontouchend="resumeScroll()">
+            <div class="flex gap-6 px-4 md:px-8 w-max" id="videoContainer">
                 
-                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="100">
-                    <div class="aspect-video w-full">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Animated Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="w-[300px] md:w-[400px] flex-shrink-0 group">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border border-brand-main/30 shadow-lg">
+                        <div id="overlay-1" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/-BF86ReJv3Q/maxresdefault.jpg');" onclick="loadVideo(this, '-BF86ReJv3Q')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-16 h-16 rounded-full flex items-center justify-center play-pulse shadow-2xl">
+                                    <i class="fas fa-play text-brand-darker text-2xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-full"></div>
                     </div>
-                    <div class="p-4 text-center">
-                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Animated</h4>
-                    </div>
-                </div>
-
-                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="200">
-                    <div class="aspect-video w-full">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Informative Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-4 text-center">
-                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Informative</h4>
-                    </div>
-                </div>
-
-                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="300">
-                    <div class="aspect-video w-full">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Podcast Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-                    </div>
-                    <div class="p-4 text-center">
-                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Podcast</h4>
+                    <div class="mt-4 text-center">
+                        <h4 class="text-white font-bold text-lg uppercase tracking-wider">Podcast</h4>
+                        <p class="text-brand-light/70 text-sm font-light">Engaging Conversations</p>
                     </div>
                 </div>
 
-                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="400">
-                    <div class="aspect-video w-full">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Story Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="w-[300px] md:w-[400px] flex-shrink-0 group">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border border-brand-main/30 shadow-lg">
+                        <div id="overlay-2" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/nMdPgFgVcmI/maxresdefault.jpg');" onclick="loadVideo(this, 'nMdPgFgVcmI')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-16 h-16 rounded-full flex items-center justify-center play-pulse shadow-2xl">
+                                    <i class="fas fa-play text-brand-darker text-2xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-full"></div>
                     </div>
-                    <div class="p-4 text-center">
-                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Story</h4>
+                    <div class="mt-4 text-center">
+                        <h4 class="text-white font-bold text-lg uppercase tracking-wider">Informative</h4>
+                        <p class="text-brand-light/70 text-sm font-light">Knowledge Simplified</p>
                     </div>
                 </div>
 
-                <div class="w-full md:w-[45%] lg:w-[30%] bg-brand-main/10 rounded-xl overflow-hidden border border-brand-main/30 group hover:border-brand-light transition duration-300" data-aos="fade-up" data-aos-delay="500">
-                    <div class="aspect-video w-full">
-                        <iframe class="w-full h-full" src="https://www.youtube.com/embed/YOUR_VIDEO_ID_HERE" title="Voice Sync Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <div class="w-[300px] md:w-[400px] flex-shrink-0 group">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border border-brand-main/30 shadow-lg">
+                        <div id="overlay-3" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/wlllQL-ZhCc/maxresdefault.jpg');" onclick="loadVideo(this, 'wlllQL-ZhCc')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-16 h-16 rounded-full flex items-center justify-center play-pulse shadow-2xl">
+                                    <i class="fas fa-play text-brand-darker text-2xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-full"></div>
                     </div>
-                    <div class="p-4 text-center">
-                        <h4 class="text-white font-bold uppercase tracking-wider text-sm">Type: Voice Sync</h4>
+                    <div class="mt-4 text-center">
+                        <h4 class="text-white font-bold text-lg uppercase tracking-wider">VoiceSync</h4>
+                        <p class="text-brand-light/70 text-sm font-light">Perfect Lip-Sync</p>
                     </div>
                 </div>
 
+                <div class="w-[300px] md:w-[400px] flex-shrink-0 group">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border border-brand-main/30 shadow-lg">
+                        <div id="overlay-4" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/c4lIYch_qZs/maxresdefault.jpg');" onclick="loadVideo(this, 'c4lIYch_qZs')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-16 h-16 rounded-full flex items-center justify-center play-pulse shadow-2xl">
+                                    <i class="fas fa-play text-brand-darker text-2xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-full"></div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <h4 class="text-white font-bold text-lg uppercase tracking-wider">Animated</h4>
+                        <p class="text-brand-light/70 text-sm font-light">Dynamic Motion Graphics</p>
+                    </div>
+                </div>
+
+                <div class="w-[300px] md:w-[400px] flex-shrink-0 group">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border border-brand-main/30 shadow-lg">
+                        <div id="overlay-5" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/ifGZjszBAMg/maxresdefault.jpg');" onclick="loadVideo(this, 'ifGZjszBAMg')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-16 h-16 rounded-full flex items-center justify-center play-pulse shadow-2xl">
+                                    <i class="fas fa-play text-brand-darker text-2xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-full"></div>
+                    </div>
+                    <div class="mt-4 text-center">
+                        <h4 class="text-white font-bold text-lg uppercase tracking-wider">Story</h4>
+                        <p class="text-brand-light/70 text-sm font-light">Cinematic Visual Journey</p>
+                    </div>
+                </div>
+
+                <div class="w-1 md:w-8 flex-shrink-0"></div>
             </div>
         </div>
     </section>
@@ -471,7 +535,81 @@
             document.getElementById('customAlert').classList.add('hidden');
         }
 
-        // --- REMOVED OLD VIDEO MARQUEE LOGIC ---
+        // --- NEW: Video Facade Logic (FIXED) ---
+        function loadVideo(element, videoId) {
+            // Remove the overlay
+            element.style.display = 'none';
+            // Find the sibling container
+            const container = element.nextElementSibling;
+            // Inject the iframe with autoplay AND mute to fix browser blocking
+            container.innerHTML = `
+                <iframe class="w-full h-full" 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1&rel=0&playsinline=1" 
+                    title="YouTube video player" 
+                    frameborder="0" 
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen>
+                </iframe>
+            `;
+        }
+
+        // --- NEW: Auto Scroll Logic with Manual Override ---
+        const scrollContainer = document.getElementById('scrollingWrapper');
+        let scrollInterval;
+        let isPaused = false;
+        let scrollSpeed = 1; // Pixels per tick
+
+        function startAutoScroll() {
+            if (scrollInterval) clearInterval(scrollInterval);
+            scrollInterval = setInterval(() => {
+                if (!isPaused) {
+                    // If scrolled to end, reset to start for loop effect (optional, or just stop)
+                    if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 1) {
+                         scrollContainer.scrollLeft = 0; // Loop back
+                    } else {
+                         scrollContainer.scrollLeft += scrollSpeed;
+                    }
+                }
+            }, 20); // 50fps
+        }
+
+        function pauseScroll() {
+            // Only pause if the master toggle is currently Playing
+            const btnIcon = document.getElementById('scrollIcon');
+            if(btnIcon.classList.contains('fa-pause')) {
+                isPaused = true;
+            }
+        }
+
+        function resumeScroll() {
+             const btnIcon = document.getElementById('scrollIcon');
+             if(btnIcon.classList.contains('fa-pause')) {
+                 isPaused = false;
+             }
+        }
+
+        function toggleScroll() {
+            const btnIcon = document.getElementById('scrollIcon');
+            if (btnIcon.classList.contains('fa-pause')) {
+                // User wants to Pause
+                isPaused = true;
+                btnIcon.classList.remove('fa-pause');
+                btnIcon.classList.add('fa-play');
+                // We actually clear interval here to be sure
+                clearInterval(scrollInterval);
+            } else {
+                // User wants to Play
+                isPaused = false;
+                btnIcon.classList.remove('fa-play');
+                btnIcon.classList.add('fa-pause');
+                startAutoScroll();
+            }
+        }
+
+        // Init Scroll
+        startAutoScroll();
+
 
         const form = document.getElementById('bookingForm');
         form.addEventListener('submit', (e) => {
