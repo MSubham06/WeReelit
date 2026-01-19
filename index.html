@@ -1,14 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice | WeReelit</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>WeReelit | Professional Video Editing</title>
+    <link rel="icon" type="image/png" href="assets/WeReelit Fav Logo.png">
     
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;600;700;900&display=swap" rel="stylesheet">
+
     <script>
         tailwind.config = {
             theme: {
@@ -31,237 +35,579 @@
             }
         }
     </script>
+
     <style>
-        @page {
-            size: A4;
-            margin: 0;
-        }
-
-        @media print {
-            html, body {
-                width: 210mm;
-                height: 297mm;
-                margin: 0 !important;
-                padding: 0 !important;
-                overflow: hidden;
-            }
-
-            body {
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .no-print { display: none !important; }
-            
-            .footer-section {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-            }
-        }
-
+        /* Disable Text Selection for Content Protection */
         body {
-            background-color: #525252;
-            display: flex;
-            justify-content: center;
-            padding-top: 2rem;
-            padding-bottom: 2rem;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
         }
 
-        .a4-container {
-            width: 210mm;
-            height: 297mm;
-            background: white;
-            position: relative;
-            margin: 0 auto;
-            overflow: hidden;
+        /* Allow selection in input fields so users can type */
+        input, textarea {
+            -webkit-user-select: text;
+            user-select: text;
         }
 
-        .editable:focus {
-            outline: 2px solid #72CFA6;
-            background: #f0fdf4;
-            border-radius: 2px;
-            padding: 0 2px;
+        /* Modern Slim Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(13, 51, 43, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb { background: #1B7F66; border-radius: 10px; transition: background 0.3s; }
+        ::-webkit-scrollbar-thumb:hover { background: #72CFA6; }
+        .modern-scroll::-webkit-scrollbar { height: 4px; }
+        
+        select option { background-color: #0d332b; color: #E0FDF4; padding: 15px; }
+        select {
+            -webkit-appearance: none; -moz-appearance: none; appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2372CFA6' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right 1.5rem center; background-size: 1.2em; 
+        }
+        select::-ms-expand { display: none; }
+
+        /* Snow Effect */
+        .snowflake {
+            position: absolute; top: -10px; background-color: white; border-radius: 50%;
+            opacity: 0.8; pointer-events: none; animation: snowfall linear infinite;
+        }
+        @keyframes snowfall {
+            0% { transform: translateY(-10vh); opacity: 0; }
+            20% { opacity: 1; }
+            100% { transform: translateY(100vh); opacity: 0.2; }
+        }
+
+        /* Pulse Animation */
+        .play-pulse { animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(114, 207, 166, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 20px rgba(114, 207, 166, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(114, 207, 166, 0); }
         }
     </style>
 </head>
-<body class="font-sans text-brand-black">
+<body class="bg-brand-dark text-brand-text font-sans antialiased overflow-x-hidden w-full" oncontextmenu="return false;">
 
-    <div id="invoice-capture" class="a4-container bg-brand-white shadow-xl print:shadow-none">
-        
-        <div class="px-8 pt-10">
-            
-            <div class="flex justify-between items-start border-b-2 border-brand-dark pb-4 mb-6">
-                <div>
-                    <h1 class="text-4xl font-bold text-brand-dark tracking-tighter">We<span class="text-brand-light">Reelit</span></h1>
-                    <p class="text-xs text-brand-main font-semibold tracking-wide mt-1">Professional Video Editing & Services</p>
+    <div id="customAlert" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 transition-opacity duration-300">
+        <div class="bg-brand-darker border border-brand-light/30 p-8 rounded-2xl max-w-sm w-full text-center shadow-2xl transform scale-100 transition-all" data-aos="zoom-in">
+            <div class="mb-4 text-brand-light text-5xl drop-shadow-lg"><i class="fas fa-check-circle"></i></div>
+            <h3 class="text-2xl font-bold text-white mb-2">Request Received!</h3>
+            <p class="text-gray-300 mb-6 font-light leading-relaxed text-sm">We will connect with you via WhatsApp or Email within 24hrs. Thanks for choosing us!</p>
+            <button onclick="closeAlert()" class="bg-brand-light text-brand-darker font-bold py-3 px-8 rounded-full hover:bg-white hover:scale-105 transition transform shadow-lg">OK</button>
+        </div>
+    </div>
+
+    <nav class="fixed w-full z-50 bg-brand-dark/95 md:backdrop-blur-md border-b border-brand-main/30 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 md:h-20 items-center">
+                <div class="flex-shrink-0 flex items-center">
+                    <img class="h-8 w-auto md:h-8" src="assets/WeReelit-BrandName.png" alt="WeReelit"> 
                 </div>
-                <div class="text-right">
-                    <h2 class="text-2xl font-bold text-gray-200 uppercase tracking-widest">Invoice</h2>
-                    <div class="text-sm text-brand-darker mt-1 flex flex-col items-end gap-1">
-                        <div class="flex items-center gap-2">
-                            <span class="font-bold text-brand-dark">Date:</span> 
-                            <span contenteditable="true" class="editable min-w-[80px] text-right">Oct 24, 2025</span>
+                <div class="hidden md:flex space-x-8 items-center">
+                    <a href="#home" class="hover:text-brand-light transition font-light text-sm uppercase tracking-widest">Home</a>
+                    <a href="#about" class="hover:text-brand-light transition font-light text-sm uppercase tracking-widest">About</a>
+                    <a href="#why" class="hover:text-brand-light transition font-light text-sm uppercase tracking-widest">Why Us</a>
+                    <a href="#work" class="hover:text-brand-light transition font-light text-sm uppercase tracking-widest">Work</a>
+                    <a href="#pricing" class="hover:text-brand-light transition font-light text-sm uppercase tracking-widest">Pricing</a>
+                    <a href="#contact" class="px-6 py-2 border border-brand-light text-brand-light rounded-full hover:bg-brand-light hover:text-brand-darker transition font-bold text-sm">Book Now</a>
+                </div>
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-btn" class="text-brand-light hover:text-white focus:outline-none p-2" aria-label="Open Menu">
+                        <i class="fas fa-bars text-2xl"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div id="mobile-menu" class="hidden md:hidden bg-brand-darker border-t border-brand-main/30 shadow-xl w-full absolute left-0 z-40 transition-all duration-300 ease-in-out">
+            <a href="#home" onclick="closeMenu()" class="block py-4 px-6 text-sm hover:bg-brand-main/20 border-b border-brand-main/10">Home</a>
+            <a href="#about" onclick="closeMenu()" class="block py-4 px-6 text-sm hover:bg-brand-main/20 border-b border-brand-main/10">About</a>
+            <a href="#why" onclick="closeMenu()" class="block py-4 px-6 text-sm hover:bg-brand-main/20 border-b border-brand-main/10">Why Us</a>
+            <a href="#work" onclick="closeMenu()" class="block py-4 px-6 text-sm hover:bg-brand-main/20 border-b border-brand-main/10">Work</a>
+            <a href="#pricing" onclick="closeMenu()" class="block py-4 px-6 text-sm hover:bg-brand-main/20 border-b border-brand-main/10">Pricing</a>
+            <a href="#contact" onclick="closeMenu()" class="block py-4 px-6 text-sm font-bold text-brand-light bg-brand-main/10">Book Now</a>
+        </div>
+    </nav>
+
+    <section id="home" class="relative min-h-screen flex flex-col justify-center pt-16 md:pt-0 overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-b from-brand-dark via-brand-main/10 to-brand-dark z-0"></div>
+        <div id="snow-container" class="absolute inset-0 pointer-events-none z-[5]"></div>
+        <div class="relative z-10 flex-grow flex flex-col justify-center items-center text-center max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full" data-aos="fade-up" data-aos-duration="1000">
+            <h1 class="text-4xl sm:text-5xl md:text-8xl font-black text-white tracking-tighter mb-4 leading-tight">
+                We<span class="text-brand-light">Reelit</span>
+            </h1>
+            <p class="text-lg md:text-2xl font-light text-brand-text/80 mb-8 max-w-2xl mx-auto">
+                Transforming raw footage into <span class="font-bold text-white">diamond-tier</span> content. Classic storytelling with a modern touch.
+            </p>
+            <div class="flex flex-row gap-4 justify-center mb-12">
+                <a href="#work" class="px-6 md:px-8 py-3 bg-brand-light text-brand-darker font-bold rounded hover:bg-white transition transform hover:-translate-y-1 text-sm md:text-base">View Work</a>
+                <a href="#contact" class="px-6 md:px-8 py-3 border border-brand-light text-brand-light font-bold rounded hover:bg-brand-main/30 transition text-sm md:text-base">Get Quote</a>
+            </div>
+        </div>
+        <div class="relative z-10 w-full border-t border-brand-main/20 md:border-none pb-8 md:absolute md:bottom-8 pt-4 md:pt-0">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-xs font-thin uppercase tracking-widest mb-4 opacity-60">Trusted By Clients Like</p>
+                <div class="flex flex-wrap justify-center gap-6 md:gap-16 items-center opacity-70 grayscale hover:grayscale-0 transition duration-500">
+                    <span class="text-lg md:text-xl font-bold font-serif">Smylo</span>
+                    <span class="text-lg md:text-xl font-bold">Simplilean</span>
+                    <span class="text-lg md:text-xl font-bold italic">Finize</span>
+                    <span class="text-lg md:text-xl font-bold">Sash Cafe</span>
+                    <span class="text-lg md:text-xl font-bold italic">House of Cats</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="about" class="min-h-screen flex items-center py-20 bg-brand-darker overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="relative md:mr-0 md:pr-0 order-2 md:order-1" data-aos="fade-right">
+                    <div class="absolute inset-0 bg-brand-light rounded-lg transform translate-x-3 translate-y-3"></div>
+                    <img src="assets/Me.jpg" alt="Subham Profile" class="relative rounded-lg shadow-2xl w-full object-cover h-auto aspect-[4/5] md:h-[500px] border-2 border-brand-main">
+                </div>
+                <div data-aos="fade-left" class="order-1 md:order-2">
+                    <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">About Me</h2>
+                    <h3 class="text-3xl md:text-4xl font-bold text-white mb-6">Hey, I'm Subham</h3>
+                    <p class="font-light text-base md:text-lg mb-4 text-gray-300 leading-relaxed">
+                        I am a <strong>Software Developer</strong> by profession and a B.Tech student, but my creative heart beats for Video Editing. 
+                    </p>
+                    <p class="font-light text-base md:text-lg mb-8 text-gray-300 leading-relaxed">
+                        For the last <strong>4-5 years</strong>, I have been working as a freelance editor for multiple clients. What started as a basic hobby has turned into a professional passion where I combine technical precision with storytelling.
+                    </p>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="p-4 bg-brand-main/10 rounded border border-brand-main/30">
+                            <i class="fas fa-handshake text-brand-light text-2xl mb-2"></i>
+                            <h4 class="font-bold text-white">Trusted</h4>
+                            <p class="text-xs font-thin text-brand-text/70">Reliable Service & Comms</p>
                         </div>
-                        <div>
-                            <span class="font-bold text-brand-dark">Invoice #:</span> 
-                            <span id="invoice-number" contenteditable="true" class="editable">001</span>
+                        <div class="p-4 bg-brand-main/10 rounded border border-brand-main/30">
+                            <i class="fas fa-truck-fast text-brand-light text-2xl mb-2"></i>
+                            <h4 class="font-bold text-white">Fast Delivery</h4>
+                            <p class="text-xs font-thin text-brand-text/70">24-48 Hr Turnaround</p>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <div class="flex justify-between mb-8">
-                <div class="w-1/2 pr-4">
-                    <h3 class="text-[11px] font-bold text-brand-main uppercase tracking-widest mb-2">Bill To</h3>
-                    <div contenteditable="true" class="editable text-brand-black text-sm leading-relaxed font-medium">
-                        [Client Name]<br>
-                        [Client Company]<br>
-                        [Client Email/Phone]
+    <section id="why" class="min-h-screen flex items-center py-20 bg-brand-dark border-t border-brand-main/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
+            <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">Why Choose Us</h2>
+            <h3 class="text-3xl md:text-4xl font-bold text-white mb-6">The WeReelit Advantage</h3>
+            <p class="max-w-2xl mx-auto text-gray-400 font-light mb-16">We don't just cut clips; we engineer attention. Here is how we ensure your content stands out in the feed.</p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="p-8 bg-brand-main/10 rounded-2xl border border-brand-main/20 hover:border-brand-light/50 transition duration-300" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-16 h-16 mx-auto bg-brand-darker rounded-full flex items-center justify-center mb-6 shadow-lg">
+                        <i class="fas fa-bolt text-3xl text-brand-light"></i>
                     </div>
+                    <h3 class="text-xl font-bold mb-4 text-white">Rapid Turnaround</h3>
+                    <p class="font-light text-sm text-gray-300 leading-relaxed">
+                        Time is currency in content creation. Our optimized rendering pipeline ensures you receive your first draft within <strong>24 to 48 hours</strong>. We respect your schedule so you can stay consistent.
+                    </p>
                 </div>
-                <div class="w-1/2 text-right pl-4">
-                    <h3 class="text-[11px] font-bold text-brand-main uppercase tracking-widest mb-2">Pay To</h3>
-                    <p class="text-brand-black text-sm leading-relaxed font-medium">
-                        <span class="font-bold text-brand-dark">WeReelit</span><br>
-                        +91 79089 13742<br>
-                        Freelance Video Editor
+                <div class="p-8 bg-brand-main/10 rounded-2xl border border-brand-main/20 hover:border-brand-light/50 transition duration-300" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-16 h-16 mx-auto bg-brand-darker rounded-full flex items-center justify-center mb-6 shadow-lg">
+                        <i class="fas fa-layer-group text-3xl text-brand-light"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-white">Structured Workflow</h3>
+                    <p class="font-light text-sm text-gray-300 leading-relaxed">
+                        No guessing games. We offer clear, tiered packages. Our structured feedback loops mean your revisions are handled efficiently, ensuring the final output matches your vision perfectly.
+                    </p>
+                </div>
+                <div class="p-8 bg-brand-main/10 rounded-2xl border border-brand-main/20 hover:border-brand-light/50 transition duration-300" data-aos="fade-up" data-aos-delay="300">
+                    <div class="w-16 h-16 mx-auto bg-brand-darker rounded-full flex items-center justify-center mb-6 shadow-lg">
+                        <i class="fas fa-shield-alt text-3xl text-brand-light"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-4 text-white">Secure Payments</h3>
+                    <p class="font-light text-sm text-gray-300 leading-relaxed">
+                        Your trust is paramount. We operate on a transparent model requiring only a 30% advance. You receive the full video with a watermark for review, which is removed upon final payment.
                     </p>
                 </div>
             </div>
+        </div>
+    </section>
 
-            <table class="w-full mb-6">
-                <thead>
-                    <tr class="bg-brand-dark text-brand-text text-left text-[11px] uppercase tracking-wider">
-                        <th class="py-3 px-5 w-3/4 font-semibold">Description</th>
-                        <th class="py-3 px-5 text-right w-1/4 font-semibold">Amount (INR)</th>
-                    </tr>
-                </thead>
-                <tbody class="text-brand-black text-sm">
-                    <tr class="border-b border-gray-100">
-                        <td class="py-5 px-5 align-top">
-                            <span contenteditable="true" class="editable font-bold text-brand-darker block text-base mb-3">Video Editing Service</span>
-                            
-                            <div class="text-gray-600 text-xs space-y-2">
-                                <div class="flex gap-2">
-                                    <span class="font-bold w-24 flex-shrink-0">Project:</span>
-                                    <span contenteditable="true" class="editable">Corporate Highlight Reel</span>
-                                </div>
-                                <div class="flex gap-2">
-                                    <span class="font-bold w-24 flex-shrink-0">Package:</span>
-                                    <span contenteditable="true" class="editable">[Bronze/Silver/Gold]</span>
-                                </div>
-                                <div class="flex gap-2">
-                                    <span class="font-bold w-24 flex-shrink-0">Duration:</span>
-                                    <span contenteditable="true" class="editable">~60 Seconds</span>
-                                </div>
-                                <div class="flex gap-2">
-                                    <span class="font-bold w-24 flex-shrink-0">Video Count:</span>
-                                    <span contenteditable="true" class="editable">1</span>
-                                </div>
-                                <div class="flex gap-2">
-                                    <span class="font-bold w-24 flex-shrink-0">Revisions:</span>
-                                    <span contenteditable="true" class="editable">2 Rounds Included</span>
-                                </div>
-                                <div class="flex gap-2">
-                                    <span class="font-bold w-24 flex-shrink-0">Rush/Add-on:</span>
-                                    <span contenteditable="true" class="editable">N/A</span>
+    <section id="work" class="min-h-screen flex flex-col justify-center py-20 bg-brand-darker overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-12 w-full">
+            <div class="text-center">
+                <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">Portfolio</h2>
+                <h3 class="text-3xl font-bold text-white">Featured Projects</h3>
+                <p class="text-sm font-light text-brand-text/60 mt-2">Swipe to explore our work</p>
+            </div>
+        </div>
+        <div id="scrollingWrapper" class="w-full md:overflow-x-auto modern-scroll pb-8 px-0 md:px-4" onmouseenter="pauseScroll()" onmouseleave="resumeScroll()">
+            <div class="flex flex-col md:flex-row gap-12 md:gap-8 px-4 md:px-8 w-full md:w-max items-center md:items-start" id="videoContainer">
+                
+                <div class="w-full md:w-[500px] flex-shrink-0 group">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border-2 border-brand-main/30 shadow-2xl transition hover:border-brand-light/50">
+                        <div id="overlay-1" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/-BF86ReJv3Q/maxresdefault.jpg');" onclick="loadVideo(this, '-BF86ReJv3Q')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-20 h-20 rounded-full flex items-center justify-center play-pulse shadow-2xl transform group-hover:scale-110 transition">
+                                    <i class="fas fa-play text-brand-darker text-3xl ml-1"></i>
                                 </div>
                             </div>
-                        </td>
-                        <td class="py-5 px-5 text-right font-bold align-top text-brand-dark text-base" contenteditable="true">₹1200</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div class="flex justify-end">
-                <div class="w-1/2">
-                    <div class="flex justify-between py-2 px-5 border-b border-gray-100 text-sm">
-                        <span class="text-gray-600">Total Amount</span>
-                        <span class="font-bold text-brand-black" contenteditable="true">₹1200</span>
+                        </div>
+                        <div class="w-full h-full"></div>
                     </div>
-                    <div class="flex justify-between py-2 px-5 border-b border-gray-100 bg-green-50 text-sm">
-                        <span class="text-brand-main font-medium">Less: Advance (30%)</span>
-                        <span class="font-bold text-brand-main" contenteditable="true">- ₹360</span>
-                    </div>
-                    <div class="flex justify-between py-3 px-5 bg-brand-dark text-brand-text mt-2 rounded-sm shadow-sm">
-                        <span class="font-bold uppercase text-sm self-center">Balance Due</span>
-                        <span class="font-bold text-lg" contenteditable="true">₹840</span>
+                    <div class="mt-6 text-center">
+                        <h4 class="text-white font-bold text-2xl uppercase tracking-wider mb-1">Podcast</h4>
+                        <p class="text-brand-light/80 text-base font-light">Engaging Conversations & Clips</p>
                     </div>
                 </div>
+
+                <div class="w-full md:w-[500px] flex-shrink-0 group">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border-2 border-brand-main/30 shadow-2xl transition hover:border-brand-light/50">
+                        <div id="overlay-2" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/nMdPgFgVcmI/maxresdefault.jpg');" onclick="loadVideo(this, 'nMdPgFgVcmI')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-20 h-20 rounded-full flex items-center justify-center play-pulse shadow-2xl transform group-hover:scale-110 transition">
+                                    <i class="fas fa-play text-brand-darker text-3xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-full"></div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <h4 class="text-white font-bold text-2xl uppercase tracking-wider mb-1">Informative</h4>
+                        <p class="text-brand-light/80 text-base font-light">Knowledge Simplified</p>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-[500px] flex-shrink-0 group">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border-2 border-brand-main/30 shadow-2xl transition hover:border-brand-light/50">
+                        <div id="overlay-3" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/wlllQL-ZhCc/maxresdefault.jpg');" onclick="loadVideo(this, 'wlllQL-ZhCc')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-20 h-20 rounded-full flex items-center justify-center play-pulse shadow-2xl transform group-hover:scale-110 transition">
+                                    <i class="fas fa-play text-brand-darker text-3xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-full"></div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <h4 class="text-white font-bold text-2xl uppercase tracking-wider mb-1">VoiceSync</h4>
+                        <p class="text-brand-light/80 text-base font-light">Perfect Lip-Sync Dubbing</p>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-[500px] flex-shrink-0 group mobile-hidden hidden md:block">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border-2 border-brand-main/30 shadow-2xl transition hover:border-brand-light/50">
+                        <div id="overlay-4" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/c4lIYch_qZs/maxresdefault.jpg');" onclick="loadVideo(this, 'c4lIYch_qZs')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-20 h-20 rounded-full flex items-center justify-center play-pulse shadow-2xl transform group-hover:scale-110 transition">
+                                    <i class="fas fa-play text-brand-darker text-3xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-full"></div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <h4 class="text-white font-bold text-2xl uppercase tracking-wider mb-1">Animated</h4>
+                        <p class="text-brand-light/80 text-base font-light">Dynamic Motion Graphics</p>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-[500px] flex-shrink-0 group mobile-hidden hidden md:block">
+                    <div class="relative aspect-video w-full bg-black rounded-xl overflow-hidden border-2 border-brand-main/30 shadow-2xl transition hover:border-brand-light/50">
+                        <div id="overlay-5" class="absolute inset-0 z-10 bg-cover bg-center cursor-pointer" style="background-image: url('https://img.youtube.com/vi/ifGZjszBAMg/maxresdefault.jpg');" onclick="loadVideo(this, 'ifGZjszBAMg')">
+                            <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition duration-300 flex items-center justify-center">
+                                <div class="bg-brand-light/90 w-20 h-20 rounded-full flex items-center justify-center play-pulse shadow-2xl transform group-hover:scale-110 transition">
+                                    <i class="fas fa-play text-brand-darker text-3xl ml-1"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="w-full h-full"></div>
+                    </div>
+                    <div class="mt-6 text-center">
+                        <h4 class="text-white font-bold text-2xl uppercase tracking-wider mb-1">Story</h4>
+                        <p class="text-brand-light/80 text-base font-light">Cinematic Visual Journey</p>
+                    </div>
+                </div>
+                <div class="w-1 md:w-8 flex-shrink-0"></div>
+            </div>
+
+            <div class="md:hidden text-center mt-10">
+                <button id="seeMoreBtn" onclick="toggleSeeMore()" class="px-8 py-3 border border-brand-light text-brand-light rounded-full font-bold uppercase tracking-widest hover:bg-brand-light hover:text-brand-darker transition">
+                    See More 
+                </button>
             </div>
         </div>
+    </section>
 
-        <div class="footer-section absolute bottom-0 w-full px-8 pb-10 pt-5 border-t border-gray-200 bg-brand-white">
-            <div class="grid grid-cols-2 gap-10">
-                <div>
-                    <h3 class="text-sm font-bold text-brand-dark mb-3 uppercase tracking-wider">Payment Details</h3>
-                    <p class="text-sm text-brand-darker mb-2">
-                        <strong class="mr-1 text-brand-black">UPI Holder:</strong> <span contenteditable="true" class="editable font-medium">M SUBHAM</span>
-                    </p>
-                    <p class="text-sm text-brand-darker mb-2">
-                        <strong class="mr-1 text-brand-black">UPI ID:</strong> <span contenteditable="true" class="editable font-medium">9933264878@axl</span>
-                    </p>
-                    <p class="text-sm text-brand-darker">
-                        <strong class="mr-1 text-brand-black">GPay/PhonePe:</strong> +91 99332 64878
-                    </p>
-                </div>
-                <div>
-                    <h3 class="text-sm font-bold text-brand-dark mb-3 uppercase tracking-wider">Terms & Conditions</h3>
-                    <ul class="text-[13px] text-gray-600 leading-snug list-disc pl-4 marker:text-brand-light space-y-1">
-                        <li><strong>Secure Payment:</strong> 30% advance required to begin.</li>
-                        <li><strong>Rapid Turnaround:</strong> First draft within 24-48 hours.</li>
-                        <li><strong>Final Delivery:</strong> Watermark removed on full payment.</li>
+    <section id="pricing" class="min-h-screen flex flex-col justify-center py-20 bg-brand-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div class="text-center mb-16">
+                <h2 class="text-brand-light font-bold text-sm uppercase tracking-widest mb-2">Packages</h2>
+                <h3 class="text-3xl md:text-4xl font-bold text-white">Choose Your Edit</h3>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 gap-y-8">
+                <div class="bg-brand-darker border border-brand-main/30 rounded-2xl p-6 hover:border-brand-light transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-[#cd7f32] text-xs font-bold px-3 py-1 text-black rounded-bl-lg">BRONZE</div>
+                    <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-brand-light transition">Basic</h3>
+                    <div class="text-4xl font-black text-brand-light mb-4">₹800</div>
+                    <ul class="text-sm font-light space-y-3 mb-8 text-gray-300">
+                        <li><i class="fas fa-clock text-brand-light mr-2"></i> 20 - 30 Sec</li>
+                        <li><i class="fas fa-language text-brand-light mr-2"></i> English Subtitles</li>
+                        <li><i class="fas fa-pen text-brand-light mr-2"></i> 1 Correction</li>
                     </ul>
+                    <a href="#contact" onclick="selectPack('Basic - Bronze')" class="block text-center py-2 w-full border border-brand-light text-brand-light rounded hover:bg-brand-light hover:text-brand-darker font-bold transition">Select</a>
+                </div>
+                <div class="bg-brand-darker border border-brand-main/30 rounded-2xl p-6 hover:border-brand-light transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-[#c0c0c0] text-xs font-bold px-3 py-1 text-black rounded-bl-lg">SILVER</div>
+                    <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-brand-light transition">Simple</h3>
+                    <div class="text-4xl font-black text-brand-light mb-4">₹1000</div>
+                    <ul class="text-sm font-light space-y-3 mb-8 text-gray-300">
+                        <li><i class="fas fa-clock text-brand-light mr-2"></i> 30 - 40 Sec</li>
+                        <li><i class="fas fa-language text-brand-light mr-2"></i> Eng & Hindi Subs</li>
+                        <li><i class="fas fa-pen text-brand-light mr-2"></i> 2 Corrections</li>
+                    </ul>
+                    <a href="#contact" onclick="selectPack('Simple - Silver')" class="block text-center py-2 w-full border border-brand-light text-brand-light rounded hover:bg-brand-light hover:text-brand-darker font-bold transition">Select</a>
+                </div>
+                <div class="bg-brand-darker border-2 border-brand-light rounded-2xl p-6 md:transform md:scale-105 shadow-2xl shadow-brand-light/10 relative overflow-hidden z-10">
+                    <div class="absolute top-0 right-0 bg-[#ffd700] text-xs font-bold px-3 py-1 text-black rounded-bl-lg">GOLD</div>
+                    <div class="absolute top-0 left-0 w-full h-1 bg-brand-light"></div>
+                    <h3 class="text-2xl font-bold text-white mb-2">Intermediate</h3>
+                    <div class="text-4xl font-black text-brand-light mb-4">₹1200</div>
+                    <ul class="text-sm font-light space-y-3 mb-8 text-white">
+                        <li><i class="fas fa-clock text-brand-light mr-2"></i> 40 - 50 Sec</li>
+                        <li><i class="fas fa-language text-brand-light mr-2"></i> Eng & Hindi Subs</li>
+                        <li><i class="fas fa-pen text-brand-light mr-2"></i> 3 Corrections</li>
+                    </ul>
+                    <a href="#contact" onclick="selectPack('Intermediate - Gold')" class="block text-center py-2 w-full bg-brand-light text-brand-darker rounded hover:bg-white font-bold transition shadow-lg">Most Popular</a>
+                </div>
+                <div class="bg-brand-darker border border-brand-main/30 rounded-2xl p-6 hover:border-brand-light transition duration-300 relative overflow-hidden group">
+                    <div class="absolute top-0 right-0 bg-[#b9f2ff] text-xs font-bold px-3 py-1 text-black rounded-bl-lg">DIAMOND</div>
+                    <h3 class="text-2xl font-bold text-white mb-2 group-hover:text-brand-light transition">Advance</h3>
+                    <div class="text-4xl font-black text-brand-light mb-4">₹1500</div>
+                    <ul class="text-sm font-light space-y-3 mb-8 text-gray-300">
+                        <li><i class="fas fa-clock text-brand-light mr-2"></i> 50s - 1 Min</li>
+                        <li><i class="fas fa-magic text-brand-light mr-2"></i> Plus Animations</li>
+                        <li><i class="fas fa-pen text-brand-light mr-2"></i> 4 Corrections</li>
+                    </ul>
+                    <a href="#contact" onclick="selectPack('Advance - Diamond')" class="block text-center py-2 w-full border border-brand-light text-brand-light rounded hover:bg-brand-light hover:text-brand-darker font-bold transition">Select</a>
+                </div>
+            </div>
+            <div class="mt-12 p-6 border border-brand-main/30 rounded-lg bg-brand-darker/50 text-center">
+                <p class="text-xs md:text-sm font-light text-gray-400 leading-relaxed">
+                    <span class="font-bold text-brand-light">*Note:</span> 30% Advance required to start. Final video delivered with watermark. 
+                    <span class="text-white font-medium block md:inline mt-1 md:mt-0">After full payment only watermark will be removed.</span>
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="min-h-screen flex items-center py-20 relative overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
+            <div class="bg-brand-darker/80 backdrop-blur-md rounded-2xl border border-brand-main/30 shadow-2xl overflow-hidden">
+                <div class="flex flex-col lg:flex-row">
+                    <div class="lg:w-1/3 bg-brand-main/10 p-8 md:p-12 flex flex-col justify-center text-center lg:text-left border-b lg:border-b-0 lg:border-r border-brand-main/30">
+                        <h2 class="text-3xl font-bold text-white mb-4">Book Your Slot</h2>
+                        <p class="text-brand-text/70 mb-8 leading-relaxed">
+                            Ready to level up your content game? Fill in the details, and I'll get back to you within 24hrs.
+                        </p>
+                        <div class="flex space-x-6 justify-center lg:justify-start mt-4">
+                            <a href="https://wa.me/917908913742?text=Hello!%20I%20checked%20your%20website%20and%20interested%20in%20video%20editing%20services." target="_blank" class="w-16 h-16 rounded-full bg-brand-main/20 flex items-center justify-center hover:bg-green-500 hover:text-white transition transform hover:scale-110 border border-brand-main/40 group shadow-lg">
+                                <i class="fab fa-whatsapp text-3xl text-brand-light group-hover:text-white"></i>
+                            </a>
+                            <a href="mailto:wereelit.official@gmail.com" class="w-16 h-16 rounded-full bg-brand-main/20 flex items-center justify-center hover:bg-brand-light hover:text-brand-darker transition transform hover:scale-110 border border-brand-main/40 group shadow-lg">
+                                <i class="fas fa-envelope text-3xl text-brand-light group-hover:text-brand-darker"></i>
+                            </a>
+                        </div>
+                        <p class="text-xs text-brand-text/40 mt-6 font-light">Click icons to connect directly</p>
+                    </div>
+                    <div class="lg:w-2/3 p-8 md:p-12">
+                        <form id="bookingForm" class="space-y-6">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs uppercase tracking-wider text-brand-light mb-2">Name</label>
+                                    <input type="text" name="name" required placeholder="e.g. Your name" class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs uppercase tracking-wider text-brand-light mb-2">WhatsApp Number</label>
+                                    <input type="tel" name="whatsapp" required placeholder="+91 99XXX XXXXX" pattern="[\+]?[0-9]{10,15}" oninput="this.value = this.value.replace(/[^0-9+]/g, '')" class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition">
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-xs uppercase tracking-wider text-brand-light mb-2">Email</label>
+                                    <input type="email" name="email" required placeholder="e.g. email@address.com" class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition">
+                                </div>
+                                <div>
+                                    <label class="block text-xs uppercase tracking-wider text-brand-light mb-2">Select Pack</label>
+                                    <select id="packSelect" name="pack" class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 pr-10 text-white focus:outline-none focus:border-brand-light transition cursor-pointer text-sm md:text-base">
+                                        <option value="Basic - Bronze">Basic - Bronze (₹800)</option>
+                                        <option value="Simple - Silver">Simple - Silver (₹1000)</option>
+                                        <option value="Intermediate - Gold">Intermediate - Gold (₹1200)</option>
+                                        <option value="Advance - Diamond">Advance - Diamond (₹1500)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-xs uppercase tracking-wider text-brand-light mb-2">Project Description</label>
+                                <textarea name="message" rows="3" placeholder="Describe the type of video..." class="w-full bg-brand-dark border border-brand-main/50 rounded p-3 text-white focus:outline-none focus:border-brand-light transition"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-brand-light text-brand-darker font-bold py-4 rounded hover:bg-white transition uppercase tracking-widest text-sm shadow-lg">
+                                Submit Request
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
+    </section>
 
-    </div>
+    <footer class="bg-brand-black py-4 text-center border-t border-brand-main/20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <img src="assets/WeReelit-BrandName.png" alt="WeReelit" class="h-10 md:h-12 mx-auto mb-4 opacity-90">
+            <p class="text-brand-text/50 text-xs mb-6 tracking-widest uppercase">Professional Video Editing & Services</p>
+            <div class="flex justify-center space-x-10 text-2xl text-brand-light mb-6">
+                <a href="https://www.youtube.com/@WeReelit" target="_blank" class="hover:text-red-500 transition transform hover:scale-110"><i class="fab fa-youtube"></i></a>
+                <a href="https://www.instagram.com/irl.subhhh?igsh=Znl4anBoMnhvNWhs" target="_blank" class="hover:text-white transition transform hover:scale-110"><i class="fab fa-instagram"></i></a>
+                <a href="https://wa.me/917908913742?text=Hello!%20I%20checked%20your%20website%20and%20interested%20in%20video%20editing%20services." target="_blank" class="hover:text-green-400 transition transform hover:scale-110"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://www.linkedin.com/in/msubham" target="_blank" class="hover:text-white transition transform hover:scale-110"><i class="fab fa-linkedin"></i></a>
+            </div>
+            <div class="text-[10px] text-gray-600 flex flex-col items-center gap-1">
+                <p>&copy; 2026 WeReelit. All rights reserved.</p>
+                <p class="opacity-50 hover:opacity-100 transition">Website by Subham</p>
+            </div>
+        </div>
+    </footer>
 
-    <div class="fixed bottom-8 right-8 no-print flex flex-col gap-3">
-        <button onclick="saveAsPDF()" class="bg-brand-dark text-brand-text px-6 py-3 rounded-full hover:bg-brand-light hover:text-brand-dark transition-all font-bold shadow-lg flex items-center justify-center gap-2">
-            <i class="fas fa-file-pdf"></i> Save as PDF
-        </button>
-        <button onclick="downloadAsImage()" class="bg-brand-main text-white px-6 py-3 rounded-full hover:bg-brand-light hover:text-brand-dark transition-all font-bold shadow-lg flex items-center justify-center gap-2">
-            <i class="fas fa-image"></i> Save as Image
-        </button>
-    </div>
-
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        function getInvoiceFilename() {
-            const invoiceNo = document.getElementById('invoice-number').innerText.trim();
-            return `WeReelit Invoice ${invoiceNo}`;
+        AOS.init({ once: true, offset: 50 });
+
+        // --- Code Protection Script ---
+        document.addEventListener('keydown', function(e) {
+            // Disable F12, Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U
+            if(e.keyCode == 123 || 
+               (e.ctrlKey && e.shiftKey && (e.keyCode == 73 || e.keyCode == 74)) || 
+               (e.ctrlKey && e.keyCode == 85)) {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // --- Snow Effect Script ---
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            const flakeCount = 50; 
+            for (let i = 0; i < flakeCount; i++) {
+                const flake = document.createElement('div');
+                flake.classList.add('snowflake');
+                flake.style.left = Math.random() * 100 + '%';
+                const size = Math.random() * 3 + 2 + 'px';
+                flake.style.width = size;
+                flake.style.height = size;
+                flake.style.animationDuration = Math.random() * 5 + 3 + 's';
+                flake.style.animationDelay = Math.random() * 5 + 's';
+                flake.style.opacity = Math.random() * 0.5 + 0.3;
+                container.appendChild(flake);
+            }
+        }
+        createSnow();
+
+        // --- Menu Logic ---
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('mobile-menu');
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation(); 
+            menu.classList.toggle('hidden');
+        });
+        function closeMenu() {
+            menu.classList.add('hidden');
+        }
+        document.addEventListener('click', (e) => {
+            if (!menu.classList.contains('hidden')) {
+                if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                    closeMenu();
+                }
+            }
+        });
+        window.addEventListener('scroll', () => {
+            if (!menu.classList.contains('hidden')) {
+                closeMenu();
+            }
+        });
+
+        function selectPack(packName) {
+            document.getElementById('packSelect').value = packName;
         }
 
-        function saveAsPDF() {
-            const originalTitle = document.title;
-            document.title = getInvoiceFilename();
-            window.print();
-            setTimeout(() => { document.title = originalTitle; }, 100);
+        function closeAlert() {
+            document.getElementById('customAlert').classList.add('hidden');
         }
 
-        function downloadAsImage() {
-            const element = document.getElementById('invoice-capture');
-            const filename = getInvoiceFilename() + ".png";
-
-            html2canvas(element, {
-                scale: 2, 
-                useCORS: true,
-                backgroundColor: "#ffffff",
-                width: 794, 
-                height: 1123, 
-                windowWidth: 794,
-                windowHeight: 1123
-            }).then(canvas => {
-                const link = document.createElement('a');
-                link.download = filename;
-                link.href = canvas.toDataURL("image/png");
-                link.click();
+        function toggleSeeMore() {
+            const hiddenItems = document.querySelectorAll('.mobile-hidden');
+            hiddenItems.forEach(item => {
+                item.classList.remove('hidden'); 
+                item.classList.add('block');
             });
+            document.getElementById('seeMoreBtn').style.display = 'none'; 
         }
-    </script>
 
+        function loadVideo(element, videoId) {
+            element.style.display = 'none';
+            const container = element.nextElementSibling;
+            clearInterval(scrollInterval);
+            isPaused = true; 
+            container.innerHTML = `
+                <iframe class="w-full h-full" 
+                    src="https://www.youtube.com/embed/${videoId}?autoplay=1&mute=0&loop=1&playlist=${videoId}&controls=1&rel=0&playsinline=1" 
+                    title="YouTube video player" frameborder="0" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>
+                </iframe>`;
+        }
+
+        // --- Auto Scroll Logic ---
+        const scrollContainer = document.getElementById('scrollingWrapper');
+        let scrollInterval;
+        let isPaused = false;
+        let scrollSpeed = 1; 
+        function startAutoScroll() {
+            if (window.innerWidth < 768) return;
+            if (scrollInterval) clearInterval(scrollInterval);
+            scrollInterval = setInterval(() => {
+                if (!isPaused) {
+                    if (scrollContainer.scrollLeft + scrollContainer.clientWidth >= scrollContainer.scrollWidth - 1) {
+                         scrollContainer.scrollLeft = 0; 
+                    } else {
+                         scrollContainer.scrollLeft += scrollSpeed;
+                    }
+                }
+            }, 20); 
+        }
+        function pauseScroll() { isPaused = true; }
+        function resumeScroll() { isPaused = false; }
+        startAutoScroll();
+
+        // --- Form Logic ---
+        const form = document.getElementById('bookingForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = form.querySelector('button');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+            const scriptURL = 'https://script.google.com/macros/s/AKfycbzv0rT4ucM-4Bn4xuR2zAbwPkQTcJ2Xpc-N2Mt34oAUp_iykdAT0ZWY3zwYo5__QVJc/exec';
+            const data = new URLSearchParams(new FormData(form));
+            fetch(scriptURL, { method: 'POST', body: data, mode: 'no-cors' })
+                .then(() => {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    form.reset();
+                    document.getElementById('customAlert').classList.remove('hidden');
+                })
+                .catch(error => {
+                    console.error('Error!', error.message);
+                    btn.innerHTML = 'Sent!';
+                    setTimeout(() => {
+                         btn.innerHTML = originalText;
+                         btn.disabled = false;
+                         form.reset();
+                         document.getElementById('customAlert').classList.remove('hidden');
+                    }, 1000);
+                });
+        });
+    </script>
 </body>
 </html>
