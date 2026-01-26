@@ -2,6 +2,8 @@
 
 **WeReelit** is a modern, responsive portfolio website designed for freelance video editing services. It showcases various editing styles (Podcasts, Informative, Motion Graphics) and provides a streamlined booking system for clients.
 
+[![Visit Website](https://img.shields.io/badge/Visit%20Website-WeReelit-orange?style=for-the-badge)](https://msubham06.github.io/WeReelit/)
+
 ## 🚀 Features
 
 - **Modern UI/UX**: Built with TailwindCSS and AOS Animation library for a smooth user experience.
